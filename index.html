@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>दिल्ली SUDARSHAN | Future Governance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="favicon-ds.jpg" type="image/jpg">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- MarkerCluster for dense urban marker grouping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+</head>
+
+<body>
+
+    <div id="loader-screen">
+        <div class="loader-content">
+            <div class="voice-visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <div class="logo-wrapper">
+                <span class="hindi-text">दिल्ली</span><span class="eng-text">SUDARSHAN</span>
+            </div>
+            <p class="tagline">BRIDGING VOICE TO VISION</p>
+            <div class="status-container">
+                <p class="changing-text">INITIALIZING SYSTEM...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-watermark"><img src="delhi-logo.jpg" alt="Delhi Govt Watermark"></div>
+
+    <div class="glass-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <img src="favicon2.jpg" alt="Delhi Sudarshan Logo" class="main-logo-img">
+                <h2>दिल्ली SUDARSHAN<span class="dot"></span></h2>
+            </div>
+            <nav>
+                <button class="nav-btn active" onclick="openTab('dashboard')"><i class="ri-dashboard-3-line"></i>
+                    <span>Mission Control</span></button>
+                <button class="nav-btn" onclick="openTab('complaints')"><i class="ri-radar-line"></i> <span>Live
+                        Feeds</span></button>
+                <button class="nav-btn" onclick="openTab('liveMap')"><i class="ri-map-line"></i> <span>Live
+                        Map</span></button>
+                <button class="nav-btn" onclick="openTab('reports')"><i class="ri-file-chart-line"></i> <span>Department
+                        Reports</span></button>
+                <button class="nav-btn" onclick="openTab('officer')"><i class="ri-shield-user-line"></i> <span>Officer
+                        ID</span></button>
+            </nav>
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="window.print()"
+                    style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: bold; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); margin: 10px;">
+                    <i class="ri-file-pdf-line"></i> Generate Official Report
+                </button>
+            </div>
+            <div class="status-box"><span class="status-dot"></span> System Online</div>
+        </aside>
+
+        <main class="content-area">
+            <div id="dashboard" class="view active-view">
+                <header class="glass-header">
+                    <h1>City Monitor <span class="badge-live">LIVE</span></h1>
+                    <p class="subtitle">Real-time AI surveillance of public complaints.</p>
+                </header>
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <h3>Total Reports</h3>
+                        <h1>243,301</h1>
+                        <div class="progress-bar">
+                            <div class="fill" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Solved</h3>
+                        <h1 class="success">205,567</h1>
+                        <div class="progress-bar">
+                            <div class="fill success-bg" style="width: 60%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Pending</h3>
+                        <h1 class="danger">37734</h1>
+                        <div class="progress-bar">
+                            <div class="fill danger-bg" style="width: 20%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-panel" style="display: flex; flex-direction: column;">
+                    <h3>Complaint Frequency</h3>
+                    <div class="chart-wrapper" style="height: 300px;">
+                        <canvas id="mainChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="complaints" class="view">
+                <header class="glass-header header-with-filter">
+                    <div class="header-content">
+                        <h1>Complaint's Record</h1>
+                        <p class="subtitle">Voice-to-Text Transmissions from Citizens.</p>
+                    </div>
+                    <div class="filter-wrapper">
+                        <i class="ri-filter-3-line"></i>
+                        <select id="statusFilter" onchange="filterTable()">
+                            <option value="All">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Solved">Solved</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Overdue" style="color:red; font-weight:bold;">⚠️ Overdue (>7 Days)</option>
+                            <option value="NoEvidence" style="color:#d97706; font-weight:bold;">📷 Missing Evidence
+                            </option>
+                        </select>
+                        <button class="filter-btn" onclick="toggleClusterMode()">
+                            <i class="ri-node-tree"></i> Cluster View
+                        </button>
+                    </div>
+                </header>
+                <div class="glass-panel no-padding-panel">
+                    <div class="table-wrapper">
+                        <table id="complaintsTable">
+                            <thead>
+                                <tr>
+                                    <th>Signal ID</th>
+                                    <th>Type</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LIVE MAP VIEW -->
+            <div id="liveMap" class="view">
+                <header class="glass-header header-with-filter" style="position:relative;">
+                    <div class="header-content">
+                        <h1>Live Map <span class="badge-live">LIVE</span></h1>
+                        <p class="subtitle">Real-time GPS plotting of complaints across NCT Delhi.</p>
+                    </div>
+                    <div class="filter-wrapper" style="align-items:center; gap:12px;">
+                        <i class="ri-map-pin-2-line"></i>
+                        <select id="mapStatusFilter" onchange="applyMapFilters()">
+                            <option value="All">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Solved">Solved</option>
+                            <option value="Overdue">Overdue</option>
+                        </select>
+
+                        <select id="mapDeptFilter" onchange="applyMapFilters()">
+                            <option value="All">All Departments</option>
+                        </select>
+
+                        <button class="filter-btn" id="mapClusterToggle" onclick="toggleMapClustering()"><i class="ri-node-tree"></i> Cluster</button>
+                    </div>
+                </header>
+
+                <div class="glass-panel" style="display:flex; padding:0; height:calc(100% - 110px);">
+                    <div class="map-wrapper">
+                        <div id="map" class="live-map"></div>
+
+                        <div class="map-controls">
+                            <div class="control-card">
+                                <h4>Map Legend</h4>
+                                <div class="legend-item"><span class="legend-dot pending"></span> Pending</div>
+                                <div class="legend-item"><span class="legend-dot solved"></span> Solved</div>
+                                <div class="legend-item"><span class="legend-dot overdue"></span> Overdue</div>
+                                <hr>
+                                <h4>Quick Actions</h4>
+                                <button class="btn-action" onclick="fitToAllMarkers()"><i class="ri-arrows-move"></i> Fit All</button>
+                                <button class="btn-action" onclick="centerToCity()"><i class="ri-map-pin-user-line"></i> Center Delhi</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="reports" class="view">
+                <header class="glass-header">
+                    <h1>Department Performance</h1>
+                    <p class="subtitle">Efficiency analysis across government departments.</p>
+                </header>
+                <div class="stats-row">
+                    <div class="stat-card highlight-card">
+                        <div class="badge-icon"><i class="ri-trophy-line"></i></div>
+                        <h3>Top Performer</h3>
+                        <h1 id="best-dept-name">MCD (South)</h1>
+                        <p class="stat-sub">98% Resolution Rate</p>
+                        <div class="progress-bar">
+                            <div class="fill success-bg" style="width: 98%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Fastest Action</h3>
+                        <h1 id="fastest-dept-name">BSES Rajdhani</h1>
+                        <p class="stat-sub">Avg Time: <span class="highlight-text">6 Hrs</span></p>
+                        <div class="progress-bar">
+                            <div class="fill" style="width: 90%; background: #06b6d4;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Highest Load</h3>
+                        <h1 id="busy-dept-name">PWD</h1>
+                        <p class="stat-sub">30050+ Active Tickets</p>
+                        <div class="progress-bar">
+                            <div class="fill danger-bg" style="width: 85%"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-panel chart-panel">
+                    <div class="panel-header">
+                        <h3>Department Workload</h3>
+                    </div>
+                    <div class="chart-wrapper"><canvas id="deptChart"></canvas></div>
+                </div>
+            </div>
+
+            <div id="officer" class="view">
+                <div class="profile-container">
+                    <div class="glass-card-large">
+                        <div class="profile-header">
+                            <div class="avatar-wrapper">
+                                <img src="officer.jpg" alt="Officer" class="avatar-img">
+                                <div class="verify-badge"><i class="ri-checkbox-circle-fill"></i></div>
+                            </div>
+                            <div class="header-text">
+                                <h1>Rajesh Kumar</h1>
+                                <p class="designation">Public Nodal Officer • Grade A</p>
+                            </div>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="info-grid">
+                            <div class="info-box">
+                                <div class="icon-box"><i class="ri-government-line"></i></div>
+                                <div><span class="label">Department</span>
+                                    <p class="value">Public Grievance Commission</p>
+                                </div>
+                            </div>
+                            <div class="info-box">
+                                <div class="icon-box"><i class="fa-solid fa-id-card"></i></div>
+                                <div><span class="label">Official ID</span>
+                                    <p class="value">DL-09-X45</p>
+                                </div>
+                            </div>
+                            <div class="info-box">
+                                <div class="icon-box"><i class="ri-map-pin-user-line"></i></div>
+                                <div><span class="label">Region</span>
+                                    <p class="value">South Delhi</p>
+                                </div>
+                            </div>
+                            <div class="info-box">
+                                <div class="icon-box"><i class="ri-smartphone-line"></i></div>
+                                <div><span class="label">Contact</span>
+                                    <p class="value">+91 98*****890</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <div id="analyzeModal" class="modal-overlay">
+            <div class="glass-modal-box">
+                <button class="close-btn" onclick="closeAnalyzeModal()">&times;</button>
+                <div class="modal-header">
+                    <h2>Complaint Analysis</h2><span class="status-pill" id="m-status">Pending</span>
+                </div>
+                <div class="modal-body">
+                    <div class="modal-img-container"><img id="m-photo" src="" alt="Evidence">
+                        <div class="img-badge">Evidence Photo</div>
+                    </div>
+                    <div class="modal-details">
+                        <div class="detail-group"><label>Citizen Voice Summary</label>
+                            <div class="desc-box">
+                                <p id="m-desc">...</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-grid">
+                            <div class="detail-item"><label>Date Received</label>
+                                <h3 id="m-date" style="color:var(--text);">...</h3>
+                            </div>
+                            <div class="detail-item"><label>Caller Mobile</label>
+                                <h3 id="m-phone" style="color:var(--primary); cursor:pointer;" title="Contact Citizen">
+                                    ...</h3>
+                            </div>
+                        </div>
+
+                        <div class="detail-grid">
+                            <div class="detail-item"><label>Region</label>
+                                <p id="m-region">...</p>
+                            </div>
+                            <div class="detail-item"><label>Complaint Type</label>
+                                <p id="m-type">...</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-group">
+                            <label>Assigned Dept</label>
+                            <p id="m-dept" style="color:var(--primary); font-weight:700;">...</p>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button class="modal-action-btn danger" onclick="updateStatus('Rejected')"><i
+                                    class="ri-spam-line"></i> Reject</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="notification-system">
+            <button class="notif-toggle-btn" onclick="toggleNotifPanel()">
+                <i class="ri-notification-3-line"></i>
+                <span class="notif-badge" id="notifCount">3</span>
+            </button>
+
+            <div class="notif-panel" id="notifPanel">
+                <div class="notif-header">
+                    <h3>Department Updates</h3>
+                    <button class="close-notif" onclick="toggleNotifPanel()">&times;</button>
+                </div>
+                <div class="notif-list" id="notifList">
+                </div>
+            </div>
+        </div>
+        <footer class="gov-footer">
+            <div class="footer-left">
+                <span>&copy; 2025 <strong>Government of NCT of Delhi</strong></span>
+                <span class="divider">|</span>
+                <span>Developed by Team Sudarshan</span>
+            </div>
+
+            <div class="footer-center">
+                <span class="security-warning"><i class="ri-lock-2-fill"></i> CONFIDENTIAL: FOR OFFICIAL USE ONLY</span>
+            </div>
+
+            <div class="footer-right">
+                <span>System v2.1.4 (Build 890)</span>
+                <span class="divider">|</span>
+                <a href="#" class="support-link"><i class="ri-customer-service-2-line"></i> IT Helpdesk</a>
+            </div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="script.js"></script>
+</body>
+
+</html>
