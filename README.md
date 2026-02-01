@@ -5,8 +5,8 @@
   
   **Bridging Voice to Vision — An AI-Powered Civic Command Center**
   
-  [![Status](https://img.shields.io/badge/System-Online-success?style=for-the-badge&logo=statuspage)](https://jatinkhandelwal662-jk.github.io/Delhi-Sudarshan-frontend/)
-  [![Deploy](https://img.shields.io/badge/Live_Demo-Click_Here-FF5722?style=for-the-badge&logo=vercel)](https://jatinkhandelwal662-jk.github.io/Delhi-Sudarshan-frontend/)
+  [![Status](https://img.shields.io/badge/System-Online-success?style=for-the-badge&logo=statuspage)](https://bhavishya-2007.github.io/Delhi-Sudarshan-Frontend/)
+  [![Deploy](https://img.shields.io/badge/Live_Demo-Click_Here-FF5722?style=for-the-badge&logo=vercel)](https://bhavishya-2007.github.io/Delhi-Sudarshan-Frontend/)
   [![Voice](https://img.shields.io/badge/Voice_AI-Gemini_2.5_Flash-4285F4?style=for-the-badge&logo=google)](https://deepmind.google/technologies/gemini/)
 
   <p align="center">
